@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>♡ 이준영 필모 소트 ♡</title>
+<style>
+body {
+    background-color: #ffe4ec;
+    font-family: 'Arial', '굴림', sans-serif;
+    color: #333;
+    text-align: center;
+}
+
+#mainTable {
+    font-size: 14px;
+    width: 440px;
+    margin: 25px auto;
+    border-collapse: separate;
+    border-spacing: 15px 10px;
+    background-color: #fff0f5;
+    border-radius: 22px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(255,182,193,0.5);
+}
+
+#leftField, #rightField {
+    width: 150px;
+    height: 160px;
+    border: 2px solid #ff99cc;
+    border-radius: 18px;
+    background-color: #fff0f5;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#leftField:hover, #rightField:hover {
+    transform: scale(1.06);
+    box-shadow: 0 5px 14px rgba(255,105,180,0.5);
+}
+
+.middleField {
+    width: 140px;
+    height: 60px;
+    border-radius: 30px;
+    background-color: #ffb6c1;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.middleField:hover {
+    background-color: #ff69b4;
+}
+
+#resultField table {
+    width: 300px;
+    margin: 20px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: #ffe4ec;
+    box-shadow: 0 4px 12px rgba(255,182,193,0.4);
+}
+
+#resultField td, #resultField th {
+    border: 1px solid #ff99cc;
+    padding: 6px;
+    text-align: center;
+}
+
+#resultField th {
+    background-color: #ff69b4;
+    color: white;
+    font-weight: bold;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+}
+</style>
+</head>
+<body>
+<div style="text-align:center; margin-top:20px;">
+    <h1 style="background:#ff80bf; color:white; padding:10px 20px; border-radius:30px; display:inline-block;">
+        🎀 Junyong Sort 🎀
+    </h1>
+    <p style="color:#ff99cc; margin-top:10px;">
+        내 취향의 캐릭터를 선택해주세요 💗
+    </p>
+
+<table id="mainTable">
+<tr>
+    <td id="battleNumber" colspan="3" style="padding-bottom: 12px;">&nbsp;</td>
+</tr>
+<tr>
+    <td id="leftField" onclick="if(finishFlag==0)sortList(-1);" rowspan="2">&nbsp;</td>
+    <td class="middleField" onclick="if(finishFlag==0)sortList(0);">둘 다 좋아♥</td>
+    <td id="rightField" onclick="if(finishFlag==0)sortList(1);" rowspan="2">&nbsp;</td>
+</tr>
+<tr>
+    <td class="middleField" onclick="if(finishFlag==0)sortList(0);">어떻게 골라..</td>
+</tr>
+</table>
+
+<div id="resultField">
+    <p><font size="2">@LJY_leeberty</font></p>
+</div>
+
+<script>
+
+// ————————— 이미지 + 이름 목록 —————————
+var namMember = [
+"<img src='images/soogyum.jpeg'> <br>이수겸",
+"<img src='images/minsoo.jpg'> <br>한민수",
+"<img src='images/bumjin.jpg'> <br>유범진",
+"<img src='images/woowon.jpg'> <br>강우원",
+"<img src='images/gukhee.jpg'> <br>정국희",
+"<img src='images/ryuk.jpg'> <br>권력",
+"<img src='images/taein.jpg'> <br>윤태인",
+"<img src='images/jihoo.jpeg'> <br>정지후",
+"<img src='images/hyunmin.jpg'> <br>정현민",
+"<img src='images/taehee.jpeg'> <br>김태희",
+"<img src='images/booyong.jpeg'> <br>최부용",
+"<img src='images/inha.jpeg'> <br>강인하",
+"<img src='images/chamin.jpeg'> <br>문차민",
+"<img src='images/sijun.jpeg'> <br>홍시준",
+"<img src='images/youngbum.jpeg'> <br>박영범",
+"<img src='images/sungje.jpeg'> <br>금성제",
+"<img src='images/hyunjung.jpeg'> <br>도현중",
+"<img src='images/soogang.jpeg'> <br>한수강",
+"<img src='images/jiwan.jpeg'> <br>최지완",
+"<img src='images/younggi.jpeg'> <br>김영기",
+"<img src='images/junhyun.jpeg'> <br>황준현",
+"<img src='images/jungyo.jpeg'> <br>최정요"
+];
+
+// ————————— 이하 JS 로직 —————————
+
+var lstMember=[],parent=[],equal=[],rec=[];var cmp1,cmp2,head1,head2,nrec,numQuestion,totalSize,finishSize,finishFlag;
+
+function initList(){
+    var n=0; lstMember[n]=[]; for(var i=0;i<namMember.length;i++)lstMember[n][i]=i;
+    parent[n]=-1; totalSize=0; n++;
+    for(var i=0;i<lstMember.length;i++){
+        if(lstMember[i].length>=2){
+            var mid=Math.ceil(lstMember[i].length/2);
+            lstMember[n]=lstMember[i].slice(0,mid); totalSize+=lstMember[n].length; parent[n]=i; n++;
+            lstMember[n]=lstMember[i].slice(mid); totalSize+=lstMember[n].length; parent[n]=i; n++;
+        }
+    }
+    for(var i=0;i<namMember.length;i++)rec[i]=0;
+    nrec=0;
+    for(var i=0;i<=namMember.length;i++)equal[i]=-1;
+    cmp1=lstMember.length-2; cmp2=lstMember.length-1;
+    head1=0; head2=0; numQuestion=1; finishSize=0; finishFlag=0;
+}
+
+function sortList(flag){
+    if(flag<0){
+        rec[nrec]=lstMember[cmp1][head1]; head1++; nrec++; finishSize++;
+        while(equal[rec[nrec-1]]!=-1){ rec[nrec]=lstMember[cmp1][head1]; head1++; nrec++; finishSize++; }
+    } else if(flag>0){
+        rec[nrec]=lstMember[cmp2][head2]; head2++; nrec++; finishSize++;
+        while(equal[rec[nrec-1]]!=-1){ rec[nrec]=lstMember[cmp2][head2]; head2++; nrec++; finishSize++; }
+    } else {
+        rec[nrec]=lstMember[cmp1][head1]; head1++; nrec++; finishSize++;
+        while(equal[rec[nrec-1]]!=-1){ rec[nrec]=lstMember[cmp1][head1]; head1++; nrec++; finishSize++; }
+        equal[rec[nrec-1]] = lstMember[cmp2][head2];
+        rec[nrec]=lstMember[cmp2][head2]; head2++; nrec++; finishSize++;
+        while(equal[rec[nrec-1]]!=-1){ rec[nrec]=lstMember[cmp2][head2]; head2++; nrec++; finishSize++; }
+    }
+    if(head1<lstMember[cmp1].length && head2==lstMember[cmp2].length){
+        while(head1<lstMember[cmp1].length){
+            rec[nrec]=lstMember[cmp1][head1]; head1++; nrec++; finishSize++;
+        }
+    } else if(head1==lstMember[cmp1].length && head2<lstMember[cmp2].length){
+        while(head2<lstMember[cmp2].length){
+            rec[nrec]=lstMember[cmp2][head2]; head2++; nrec++; finishSize++;
+        }
+    }
+    if(head1==lstMember[cmp1].length && head2==lstMember[cmp2].length){
+        for(var i=0;i<lstMember[cmp1].length+lstMember[cmp2].length;i++){
+            lstMember[parent[cmp1]][i]=rec[i];
+        }
+        lstMember.pop(); lstMember.pop();
+        cmp1-=2; cmp2-=2;
+        head1=0; head2=0; rec=[]; nrec=0;
+    }
+    if(cmp1<0){
+        showResult(); finishFlag=1;
+    } else {
+        showImage();
+    }
+}
+
+function showImage(){
+    document.getElementById("battleNumber").innerHTML = 
+        "Battle No."+numQuestion+"<br>"+Math.floor(finishSize*100/totalSize)+"% sorted.";
+    document.getElementById("leftField").innerHTML = namMember[lstMember[cmp1][head1]];
+    document.getElementById("rightField").innerHTML = namMember[lstMember[cmp2][head2]];
+    numQuestion++;
+}
+
+function showResult(){
+    var ranking=1, sameRank=1, str="<table><tr><th>순위</th><th>이름</th></tr>";
+    for(var i=0;i<namMember.length;i++){
+
+        // 🔥 이미지 태그 제거하고 이름만 남기기
+        var textOnly = namMember[lstMember[0][i]].replace(/<img[^>]*>/,"").replace("<br>","");
+
+        if(ranking==1){
+    str+="<tr><td>👑 "+ranking+"</td><td> "+textOnly+"</td></tr>";
+}else{
+    str+="<tr><td>"+ranking+"</td><td>"+textOnly+"</td></tr>";
+}
+        if(i<namMember.length-1){
+            if(equal[lstMember[0][i]]==lstMember[0][i+1]){
+                sameRank++;
+            } else {
+                ranking+=sameRank; sameRank=1;
+            }
+        }
+    }
+    str+="</table>";
+    document.getElementById("resultField").innerHTML = str;
+}
+
+initList(); showImage();
+
+</script>
+</body>
+
+</body>
